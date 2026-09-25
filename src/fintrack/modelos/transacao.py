@@ -33,3 +33,14 @@ class Transacao(ABC):
     def data(self) -> date:
         return self.__data
 
+    @property
+    @abstractmethod
+    def tipo(self) -> str:
+        pass
+
+    @abstractmethod
+    def impacto_no_saldo(self) -> float:
+        pass
+
+    def __str__(self) -> str:
+        return f"{self.data:%d/%m/%Y} | {self.tipo:<8} | {self.descricao} | R$ {self.valor:,.2f}"
