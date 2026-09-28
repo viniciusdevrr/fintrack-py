@@ -1,7 +1,7 @@
 from .transacao import Transacao
 
 
-class Receira(Transacao):
+class Receita(Transacao):
     @property
     def tipo(self) -> str:
         return "Receita"
