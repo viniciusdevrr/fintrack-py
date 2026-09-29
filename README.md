@@ -22,4 +22,4 @@ Python, FastAPI, SQLAlchemy, PostgreSQL/SQLite, JWT, Pandas, Matplotlib,
 HTML/CSS/JS, PWA
 
 ## Status
-🚧 Em desenvolvimento — veja o [roadmap](docs/roadmap.md)
+🚧 Em desenvolvimento — veja o [roadmap](src/fintrack/docs/roadmap.md)
