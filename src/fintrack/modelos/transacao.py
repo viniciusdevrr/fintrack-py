@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from datetime import date
+from fintrack.excecoes import ValorInvalidoError, DescricaoInvalidaError
 
 
 class Transacao(ABC):
-
     def __init__(self, descricao: str, valor: float, data: date | None = None) -> None:
         self.descricao = descricao
         self.valor = valor
-        self.__data = data or date.today
+        self.__data = data or date.today()
 
     @property
     def descricao(self) -> str:
@@ -16,7 +16,7 @@ class Transacao(ABC):
     @descricao.setter
     def descricao(self, nova: str) -> None:
         if not nova or not nova.strip():
-            raise ValueError("A descrição não pode ser vazia.")
+            raise DescricaoInvalidaError("A descrição não pode ser vazia.")
         self.__descricao = nova.strip()
 
     @property
@@ -26,7 +26,7 @@ class Transacao(ABC):
     @valor.setter
     def valor(self, novo: float) -> None:
         if novo <= 0:
-            raise ValueError("O valor deve ser maior que zero.")
+            raise ValorInvalidoError("O valor deve ser maior que zero.")
         self.__valor = float(novo)
 
     @property
@@ -35,12 +35,10 @@ class Transacao(ABC):
 
     @property
     @abstractmethod
-    def tipo(self) -> str:
-        pass
+    def tipo(self) -> str: ...
 
     @abstractmethod
-    def impacto_no_saldo(self) -> float:
-        pass
+    def impacto_no_saldo(self) -> float: ...
 
     def __str__(self) -> str:
         return f"{self.data:%d/%m/%Y} | {self.tipo:<8} | {self.descricao} | R$ {self.valor:,.2f}"

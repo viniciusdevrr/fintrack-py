@@ -1,4 +1,5 @@
 from .transacao import Transacao
+from fintrack.excecoes import TipoInvalidoError
 
 
 class Conta:
@@ -21,7 +22,7 @@ class Conta:
 
     def registrar(self, transacao: Transacao) -> None:
         if not isinstance(transacao, Transacao):
-            raise TypeError("Só é possível registrar objetos do tipo Transacao.")
+            raise TipoInvalidoError("Só é possível registrar objetos do tipo Transacao.")
         self.__transacoes.append(transacao)
 
     def extrato(self) -> str:
