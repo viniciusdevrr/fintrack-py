@@ -3,7 +3,6 @@ from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError
 
 
 class Meta:
-    """Representa um objetivo financeiro, ex: Viagem, Reserva de emergência."""
 
     def __init__(self, nome: str, valor_alvo: float, data_limite: date | None = None) -> None:
         self.nome = nome
@@ -44,7 +43,6 @@ class Meta:
         return self.__valor_atual >= self.__valor_alvo
 
     def aportar(self, valor: float) -> None:
-        """Adiciona dinheiro à meta (um depósito)."""
         if valor <= 0:
             raise ValorInvalidoError("O valor do aporte deve ser maior que zero.")
         self.__valor_atual += valor

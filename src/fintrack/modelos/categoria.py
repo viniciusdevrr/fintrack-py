@@ -2,7 +2,6 @@ from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError, Catego
 
 
 class Categoria:
-    """Representa um agrupamento de transações, ex: Alimentação, Transporte."""
 
     TIPOS_VALIDOS = ("receita", "despesa")
 

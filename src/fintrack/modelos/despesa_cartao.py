@@ -4,7 +4,6 @@ from fintrack.excecoes import TipoInvalidoError, ValorInvalidoError
 
 
 class DespesaCartao(Despesa):
-    """Uma despesa feita no cartão de crédito, podendo ser parcelada."""
 
     def __init__(self, descricao: str, valor_total: float, cartao: Cartao, parcelas: int = 1) -> None:
         super().__init__(descricao, valor_total)
