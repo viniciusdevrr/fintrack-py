@@ -2,6 +2,7 @@ import pytest
 from fintrack.modelos.conta import Conta
 from fintrack.modelos.receita import Receita
 from fintrack.modelos.despesa import Despesa
+from fintrack.excecoes import TipoInvalidoError
 
 
 def test_saldo_apos_transacoes():
@@ -13,7 +14,7 @@ def test_saldo_apos_transacoes():
 
 def test_registrar_objeto_invalido():
     conta = Conta("Ana")
-    with pytest.raises(TypeError):
+    with pytest.raises(TipoInvalidoError):
         conta.registrar("não sou transação")
 
 

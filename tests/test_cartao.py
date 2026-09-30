@@ -1,6 +1,7 @@
 import pytest
 from fintrack.modelos.cartao import Cartao
 from fintrack.modelos.despesa_cartao import DespesaCartao
+from fintrack.excecoes import LimiteCartaoInsuficienteError
 
 
 def test_registrar_compra_dentro_do_limite():
@@ -14,7 +15,7 @@ def test_registrar_compra_dentro_do_limite():
 def test_compra_acima_do_limite_levanta_erro():
     cartao = Cartao("Nubank", limite=500, dia_fechamento=5, dia_vencimento=12)
     compra = DespesaCartao("TV", 3000, cartao)
-    with pytest.raises(ValueError):
+    with pytest.raises(LimiteCartaoInsuficienteError):
         cartao.registrar_compra(compra)
 
 

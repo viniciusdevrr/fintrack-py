@@ -2,6 +2,7 @@ import pytest
 from fintrack.modelos.receita import Receita
 from fintrack.modelos.despesa import Despesa
 from fintrack.modelos.transacao import Transacao
+from fintrack.excecoes import ValorInvalidoError, DescricaoInvalidaError
 
 
 def test_transacao_e_abstrata():
@@ -10,12 +11,12 @@ def test_transacao_e_abstrata():
 
 
 def test_valor_negativo_levanta_erro():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValorInvalidoError):
         Despesa("Mercado", -50)
 
 
 def test_descricao_vazia_levanta_erro():
-    with pytest.raises(ValueError):
+    with pytest.raises(DescricaoInvalidaError):
         Receita("   ", 100)
 
 
