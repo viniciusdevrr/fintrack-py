@@ -1,5 +1,6 @@
 from .despesa import Despesa
 from .cartao import Cartao
+from fintrack.excecoes import TipoInvalidoError, ValorInvalidoError
 
 
 class DespesaCartao(Despesa):
@@ -18,7 +19,7 @@ class DespesaCartao(Despesa):
     @cartao.setter
     def cartao(self, valor: Cartao) -> None:
         if not isinstance(valor, Cartao):
-            raise TypeError("cartao deve ser uma instância de Cartao.")
+            raise TipoInvalidoError("cartao deve ser uma instância de Cartao.")
         self.__cartao = valor
 
     @property
@@ -28,7 +29,7 @@ class DespesaCartao(Despesa):
     @parcelas.setter
     def parcelas(self, valor: int) -> None:
         if valor < 1:
-            raise ValueError("O número de parcelas deve ser no mínimo 1.")
+            raise ValorInvalidoError("O número de parcelas deve ser no mínimo 1.")
         self.__parcelas = valor
 
     @property

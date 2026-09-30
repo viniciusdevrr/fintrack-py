@@ -1,3 +1,6 @@
+from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError, LimiteCartaoInsuficienteError
+
+
 class Cartao:
     """Representa um cartão de crédito e controla seu limite disponível."""
 
@@ -15,7 +18,7 @@ class Cartao:
     @nome.setter
     def nome(self, valor: str) -> None:
         if not valor.strip():
-            raise ValueError("O nome do cartão não pode ser vazio.")
+            raise DescricaoInvalidaError/ValorInvalidoError("O nome do cartão não pode ser vazio.")
         self.__nome = valor.strip()
 
     @property
@@ -25,7 +28,7 @@ class Cartao:
     @limite.setter
     def limite(self, valor: float) -> None:
         if valor <= 0:
-            raise ValueError("O limite deve ser maior que zero.")
+            raise DescricaoInvalidaError/ValorInvalidoError("O limite deve ser maior que zero.")
         self.__limite = valor
 
     @property
@@ -35,7 +38,7 @@ class Cartao:
     @dia_fechamento.setter
     def dia_fechamento(self, valor: int) -> None:
         if not 1 <= valor <= 28:
-            raise ValueError("Dia de fechamento deve ser entre 1 e 28.")
+            raise DescricaoInvalidaError/ValorInvalidoError("Dia de fechamento deve ser entre 1 e 28.")
         self.__dia_fechamento = valor
 
     @property
@@ -45,7 +48,7 @@ class Cartao:
     @dia_vencimento.setter
     def dia_vencimento(self, valor: int) -> None:
         if not 1 <= valor <= 28:
-            raise ValueError("Dia de vencimento deve ser entre 1 e 28.")
+            raise DescricaoInvalidaError/ValorInvalidoError("Dia de vencimento deve ser entre 1 e 28.")
         self.__dia_vencimento = valor
 
     @property
@@ -63,5 +66,5 @@ class Cartao:
 
     def registrar_compra(self, compra: "DespesaCartao") -> None:
         if compra.valor_total > self.limite_disponivel:
-            raise ValueError("Limite do cartão insuficiente para essa compra.")
+            raise LimiteCartaoInsuficienteError("Limite do cartão insuficiente para essa compra.")
         self.__compras.append(compra)

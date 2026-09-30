@@ -1,4 +1,5 @@
 from datetime import date
+from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError
 
 
 class Meta:
@@ -45,7 +46,7 @@ class Meta:
     def aportar(self, valor: float) -> None:
         """Adiciona dinheiro à meta (um depósito)."""
         if valor <= 0:
-            raise ValueError("O valor do aporte deve ser maior que zero.")
+            raise ValorInvalidoError("O valor do aporte deve ser maior que zero.")
         self.__valor_atual += valor
 
     def __str__(self) -> str:

@@ -1,3 +1,6 @@
+from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError, CategoriaInvalidaError
+
+
 class Categoria:
     """Representa um agrupamento de transações, ex: Alimentação, Transporte."""
 
@@ -15,7 +18,7 @@ class Categoria:
     @nome.setter
     def nome(self, valor: str) -> None:
         if not valor or not valor.strip():
-            raise ValueError("O nome da categoria não pode ser vazio.")
+            raise DescricaoInvalidaError("O nome da categoria não pode ser vazio.")
         self.__nome = valor.strip().capitalize()
 
     @property
@@ -25,7 +28,7 @@ class Categoria:
     @tipo.setter
     def tipo(self, valor: str) -> None:
         if valor not in self.TIPOS_VALIDOS:
-            raise ValueError(f"Tipo inválido. Use um de: {self.TIPOS_VALIDOS}")
+            raise CategoriaInvalidaError(f"Tipo inválido. Use um de: {self.TIPOS_VALIDOS}")
         self.__tipo = valor
 
     @property
@@ -35,7 +38,7 @@ class Categoria:
     @limite_mensal.setter
     def limite_mensal(self, valor: float | None) -> None:
         if valor is not None and valor <= 0:
-            raise ValueError("O limite mensal deve ser maior que zero.")
+            raise ValorInvalidoError("O limite mensal deve ser maior que zero.")
         self.__limite_mensal = valor
 
     def __repr__(self) -> str:
