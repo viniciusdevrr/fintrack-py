@@ -1,5 +1,5 @@
 import pytest
-from categoria import Categoria
+from fintrack.modelos.categoria import Categoria
 from fintrack.excecoes import ValorInvalidoError
 
 
