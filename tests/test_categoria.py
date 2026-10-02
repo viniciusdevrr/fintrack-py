@@ -1,6 +1,6 @@
 import pytest
 from fintrack.modelos.categoria import Categoria
-from fintrack.excecoes import ValorInvalidoError
+from fintrack.excecoes import CategoriaInvalidaError
 
 
 def test_categoria_valida():
@@ -10,5 +10,5 @@ def test_categoria_valida():
 
 
 def test_tipo_invalido_levanta_erro():
-    with pytest.raises(ValorInvalidoError):
+    with pytest.raises(CategoriaInvalidaError):
         Categoria("Lazer", "tipo_errado")

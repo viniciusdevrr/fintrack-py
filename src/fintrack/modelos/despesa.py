@@ -7,4 +7,4 @@ class Despesa(Transacao):
         return "Despesa"
 
     def impacto_no_saldo(self) -> float:
-        return self.valor
+        return -self.valor
