@@ -7,12 +7,10 @@
 | 4 | Autenticação (cadastro, login, JWT) | — (mercado) |
 | 5 | API em FastAPI (CRUD de tudo) | Requests/APIs |
 | 6 | Orçamento e Alertas | lógica de negócio |
-| 7 | Calendário de vencimentos | datetime |
-| 8 | Despesas recorrentes (detectar assinaturas) | regex, datas |
-| 9 | Relatórios com Pandas + gráficos | Pandas, Matplotlib |
-| 10 | Simulador de orçamento | lógica + Pandas |
-| 11 | IA financeira (motor de perguntas) | Pandas + regex |
-| 12 | Frontend web (dashboard interativo) | Projeto final |
-| 13 | Transformar em PWA (instalável no celular) | Projeto final |
-| 14 | Deploy (backend + frontend no ar) | Apresentação |
-| 15 | Trocar motor de IA por LLM real (opcional) | extensão |
+| 7 | Relatórios com Pandas + gráficos | Pandas, Matplotlib |
+| 8 | Simulador de orçamento | lógica + Pandas |
+| 9 | IA financeira (motor de perguntas) | Pandas + regex |
+| 10 | Frontend web (dashboard interativo) | Projeto final |
+| 11 | Transformar em PWA (instalável no celular) | Projeto final |
+| 12 | Deploy (backend + frontend no ar) | Apresentação |
+| 13 | Trocar motor de IA por LLM real (opcional) | extensão |
