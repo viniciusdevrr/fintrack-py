@@ -17,6 +17,10 @@ class Conta:
         return self.__saldo_inicial + sum(t.impacto_no_saldo() for t in self.__transacoes)
 
     @property
+    def saldo_inicial(self) -> float:
+        return self.__saldo_inicial
+
+    @property
     def transacoes(self) -> tuple[Transacao, ...]:
         return tuple(self.__transacoes)
 
