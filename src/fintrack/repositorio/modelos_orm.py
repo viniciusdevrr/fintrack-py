@@ -3,21 +3,18 @@ from sqlalchemy import String, Float, Integer, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from fintrack.database import Base
 
-
 class ContaORM(Base):
     __tablename__ = "contas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     titular: Mapped[str] = mapped_column(String(100))
     saldo_inicial: Mapped[float] = mapped_column(Float, default=0.0)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
 
-    # relationship() não cria uma coluna no banco — é um atalho do Python.
-    # Permite escrever conta.transacoes e já receber a lista de transações
-    # ligadas a essa conta, sem escrever a busca na mão.
+    usuario: Mapped["UsuarioORM"] = relationship(back_populates="contas")  # NOVO
     transacoes: Mapped[list["TransacaoORM"]] = relationship(
         back_populates="conta", cascade="all, delete-orphan"
     )
-
 
 class CategoriaORM(Base):
     __tablename__ = "categorias"
@@ -74,6 +71,15 @@ class TransacaoORM(Base):
         "polymorphic_on": "tipo",
     }
 
+class UsuarioORM(Base):
+    __tablename__ = "usuarios"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nome: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(150), unique=True)
+    senha_hash: Mapped[str] = mapped_column(String(255))
+
+    contas: Mapped[list["ContaORM"]] = relationship(back_populates="usuario")
 
 class ReceitaORM(TransacaoORM):
     __mapper_args__ = {"polymorphic_identity": "receita"}
