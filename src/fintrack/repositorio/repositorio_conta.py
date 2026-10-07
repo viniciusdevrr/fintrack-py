@@ -7,9 +7,13 @@ from fintrack.modelos.cartao import Cartao
 from .modelos_orm import ContaORM, ReceitaORM, DespesaORM, DespesaCartaoORM
 
 
-def salvar_conta(sessao: Session, conta: Conta) -> int:
-    """Salva a conta e todas as transações nela registradas, de uma vez."""
-    registro_conta = ContaORM(titular=conta.titular, saldo_inicial=conta.saldo_inicial)
+def salvar_conta(sessao: Session, conta: Conta, usuario_id: int) -> int:
+    """Salva a conta (vinculada a um usuário dono) e suas transações."""
+    registro_conta = ContaORM(
+        titular=conta.titular,
+        saldo_inicial=conta.saldo_inicial,
+        usuario_id=usuario_id,
+    )
     sessao.add(registro_conta)
     sessao.commit()
     sessao.refresh(registro_conta)
@@ -18,7 +22,6 @@ def salvar_conta(sessao: Session, conta: Conta) -> int:
         _salvar_transacao(sessao, transacao, registro_conta.id)
 
     return registro_conta.id
-
 
 def _salvar_transacao(sessao: Session, transacao, conta_id: int) -> None:
     dados_comuns = dict(
