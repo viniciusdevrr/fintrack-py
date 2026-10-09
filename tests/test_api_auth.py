@@ -4,15 +4,6 @@ from fintrack.api.app import app
 from fintrack.api.dependencias import obter_sessao
 
 
-@pytest.fixture
-def cliente(sessao):
-    """Substitui a dependência de sessão real pela sessão de teste em memória,
-    para a API usar o mesmo banco isolado que os outros testes já usam."""
-    app.dependency_overrides[obter_sessao] = lambda: sessao
-    yield TestClient(app)
-    app.dependency_overrides.clear()
-
-
 def test_registrar_usuario(cliente):
     resposta = cliente.post("/auth/registrar", json={
         "nome": "Ana Silva",
