@@ -14,23 +14,24 @@ roteador = APIRouter(prefix="/metas", tags=["Metas"])
 def criar_meta(
     dados: MetaCriar,
     sessao: Session = Depends(obter_sessao),
-    usuario=Depends(obter_usuario_atual),
+    autenticado=Depends(obter_usuario_atual),
 ):
+    _, usuario_id = autenticado
     try:
         meta = Meta(dados.nome, dados.valor_alvo, dados.data_limite)
-        meta_id = repo.salvar(sessao, meta)
+        meta_id = repo.salvar(sessao, meta, usuario_id)
     except FinTrackError as erro:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(erro))
-
     return _para_schema(meta_id, meta)
 
 
 @roteador.get("", response_model=list[MetaSaida])
 def listar_metas(
     sessao: Session = Depends(obter_sessao),
-    usuario=Depends(obter_usuario_atual),
+    autenticado=Depends(obter_usuario_atual),
 ):
-    return [_para_schema(0, m) for m in repo.listar_todas(sessao)]
+    _, usuario_id = autenticado
+    return [_para_schema(0, m) for m in repo.listar_todas(sessao, usuario_id)]
 
 
 def _para_schema(meta_id: int, meta: Meta) -> MetaSaida:

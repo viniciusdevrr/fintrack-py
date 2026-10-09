@@ -14,11 +14,12 @@ roteador = APIRouter(prefix="/categorias", tags=["Categorias"])
 def criar_categoria(
     dados: CategoriaCriar,
     sessao: Session = Depends(obter_sessao),
-    usuario=Depends(obter_usuario_atual),  # exige login, mesmo sem usar o valor
+    autenticado=Depends(obter_usuario_atual),
 ):
+    _, usuario_id = autenticado
     try:
         categoria = Categoria(dados.nome, dados.tipo, dados.limite_mensal)
-        categoria_id = repo.salvar(sessao, categoria)
+        categoria_id = repo.salvar(sessao, categoria, usuario_id)
     except FinTrackError as erro:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(erro))
 
@@ -30,12 +31,10 @@ def criar_categoria(
 @roteador.get("", response_model=list[CategoriaSaida])
 def listar_categorias(
     sessao: Session = Depends(obter_sessao),
-    usuario=Depends(obter_usuario_atual),
+    autenticado=Depends(obter_usuario_atual),
 ):
-    categorias = repo.listar_todas(sessao)
-    # O id não faz parte do objeto de domínio Categoria (igual vimos com Usuario),
-    # então por enquanto devolvemos sem id aqui — vamos resolver isso de forma
-    # definitiva ao ligar Categoria a um usuário dono, próxima iteração.
+    _, usuario_id = autenticado
+    categorias = repo.listar_todas(sessao, usuario_id)
     return [
         CategoriaSaida(id=0, nome=c.nome, tipo=c.tipo, limite_mensal=c.limite_mensal)
         for c in categorias
