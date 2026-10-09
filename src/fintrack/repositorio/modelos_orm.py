@@ -9,9 +9,9 @@ class ContaORM(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     titular: Mapped[str] = mapped_column(String(100))
     saldo_inicial: Mapped[float] = mapped_column(Float, default=0.0)
-    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  
 
-    usuario: Mapped["UsuarioORM"] = relationship(back_populates="contas")  # NOVO
+    usuario: Mapped["UsuarioORM"] = relationship(back_populates="contas") 
     transacoes: Mapped[list["TransacaoORM"]] = relationship(
         back_populates="conta", cascade="all, delete-orphan"
     )
@@ -23,6 +23,7 @@ class CategoriaORM(Base):
     nome: Mapped[str] = mapped_column(String(50))
     tipo: Mapped[str] = mapped_column(String(10))
     limite_mensal: Mapped[float | None] = mapped_column(Float, nullable=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
 
 
 class CartaoORM(Base):
@@ -33,6 +34,7 @@ class CartaoORM(Base):
     limite: Mapped[float] = mapped_column(Float)
     dia_fechamento: Mapped[int] = mapped_column(Integer)
     dia_vencimento: Mapped[int] = mapped_column(Integer)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
 
 
 class MetaORM(Base):
@@ -43,6 +45,7 @@ class MetaORM(Base):
     valor_alvo: Mapped[float] = mapped_column(Float)
     valor_atual: Mapped[float] = mapped_column(Float, default=0.0)
     data_limite: Mapped[date | None] = mapped_column(Date, nullable=True)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
 
 
 class TransacaoORM(Base):
