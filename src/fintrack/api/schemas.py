@@ -98,3 +98,12 @@ class ContaSaida(BaseModel):
     id: int
     titular: str
     saldo: float
+
+
+# ---------- Alertas ----------
+
+
+class AlertaSaida(BaseModel):
+    tipo: str
+    mensagem: str
+    lido: bool

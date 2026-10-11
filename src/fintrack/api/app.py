@@ -5,6 +5,7 @@ from fintrack.database import criar_tabelas
 from fintrack.api.rotas_auth import roteador as roteador_auth
 from fintrack.api.rotas_categoria import roteador as roteador_categoria
 from fintrack.api.rotas_meta import roteador as roteador_meta
+from fintrack.api.rotas_alerta import roteador as roteador_alerta
 
 
 @asynccontextmanager
@@ -26,7 +27,7 @@ app = FastAPI(
 app.include_router(roteador_auth)
 app.include_router(roteador_categoria)
 app.include_router(roteador_meta)
-
+app.include_router(roteador_alerta)
 
 @app.get("/", tags=["Status"])
 def raiz():
