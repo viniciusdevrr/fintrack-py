@@ -117,3 +117,21 @@ class AlertaSaida(BaseModel):
     tipo: str
     mensagem: str
     lido: bool
+
+
+# ---------- Simulador ----------
+
+
+class SimulacaoEntrada(BaseModel):
+    valor: float
+    categoria: str | None = None
+
+
+class SimulacaoSaida(BaseModel):
+    saldo_atual: float
+    valor_simulado: float
+    saldo_projetado: float
+    ficaria_negativo: bool
+    categoria: str | None = None
+    gasto_atual_categoria: float | None = None
+    gasto_projetado_categoria: float | None = None

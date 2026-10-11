@@ -8,6 +8,7 @@ from fintrack.api.rotas_meta import roteador as roteador_meta
 from fintrack.api.rotas_alerta import roteador as roteador_alerta
 from fintrack.api.rotas_conta import roteador as roteador_conta
 from fintrack.api.rotas_relatorio import roteador as roteador_relatorio
+from fintrack.api.rotas_simulador import roteador as roteador_simulador
 
 
 @asynccontextmanager
@@ -32,6 +33,7 @@ app.include_router(roteador_meta)
 app.include_router(roteador_alerta)
 app.include_router(roteador_conta)
 app.include_router(roteador_relatorio)
+app.include_router(roteador_simulador)
 
 
 @app.get("/", tags=["Status"])
