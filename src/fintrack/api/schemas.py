@@ -88,16 +88,26 @@ class ContaCriar(BaseModel):
     saldo_inicial: float = 0.0
 
 
-class TransacaoCriar(BaseModel):
-    tipo: str  # "receita" ou "despesa"
-    descricao: str
-    valor: float
-
-
 class ContaSaida(BaseModel):
     id: int
     titular: str
     saldo: float
+
+
+class TransacaoCriar(BaseModel):
+    tipo: str  # "receita" ou "despesa"
+    descricao: str
+    valor: float
+    categoria_id: int | None = None
+
+
+class TransacaoSaida(BaseModel):
+    id: int
+    tipo: str
+    descricao: str
+    valor: float
+    data: date
+    categoria_id: int | None
 
 
 # ---------- Alertas ----------
