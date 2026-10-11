@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.orm import Session
 from fintrack.modelos.conta import Conta
 from fintrack.modelos.receita import Receita
@@ -6,6 +7,53 @@ from fintrack.modelos.despesa_cartao import DespesaCartao
 from fintrack.modelos.cartao import Cartao
 from .modelos_orm import ContaORM, ReceitaORM, DespesaORM, DespesaCartaoORM
 
+
+def criar_conta(sessao: Session, titular: str, saldo_inicial: float, usuario_id: int) -> int:
+    registro = ContaORM(titular=titular, saldo_inicial=saldo_inicial, usuario_id=usuario_id)
+    sessao.add(registro)
+    sessao.commit()
+    sessao.refresh(registro)
+    return registro.id
+
+
+def buscar_conta_do_usuario(sessao: Session, usuario_id: int) -> ContaORM | None:
+    """Por enquanto cada usuário tem uma única conta principal."""
+    return sessao.query(ContaORM).filter_by(usuario_id=usuario_id).first()
+
+
+def registrar_transacao(sessao: Session, conta_id: int, tipo: str, descricao: str,
+                         valor: float, categoria_id: int | None) -> int:
+    from fintrack.modelos.receita import Receita
+    from fintrack.modelos.despesa import Despesa
+
+    # Reaproveita as classes de domínio só para validar (descrição vazia,
+    # valor negativo etc.) antes de gravar no banco — a validação não muda
+    # dependendo de onde o dado entra.
+    if tipo == "receita":
+        Receita(descricao, valor)
+        registro = ReceitaORM(descricao=descricao, valor=valor, data=date.today(),
+                               conta_id=conta_id, categoria_id=categoria_id)
+    elif tipo == "despesa":
+        Despesa(descricao, valor)
+        registro = DespesaORM(descricao=descricao, valor=valor, data=date.today(),
+                               conta_id=conta_id, categoria_id=categoria_id)
+    else:
+        raise ValueError("Tipo de transação deve ser 'receita' ou 'despesa'.")
+
+    sessao.add(registro)
+    sessao.commit()
+    sessao.refresh(registro)
+    return registro.id
+
+
+def listar_transacoes(sessao: Session, conta_id: int) -> list:
+    from .modelos_orm import TransacaoORM
+    return (
+        sessao.query(TransacaoORM)
+        .filter_by(conta_id=conta_id)
+        .order_by(TransacaoORM.data.desc())
+        .all()
+    )
 
 def salvar_conta(sessao: Session, conta: Conta, usuario_id: int) -> int:
     """Salva a conta (vinculada a um usuário dono) e suas transações."""
