@@ -84,6 +84,21 @@ class UsuarioORM(Base):
 
     contas: Mapped[list["ContaORM"]] = relationship(back_populates="usuario")
 
+class AlertaORM(Base):
+    __tablename__ = "alertas"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tipo: Mapped[str] = mapped_column(String(30))
+    mensagem: Mapped[str] = mapped_column(String(300))
+    data: Mapped[date] = mapped_column(Date)
+    lido: Mapped[bool] = mapped_column(default=False)
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))
+
+    # Evita gerar o MESMO alerta várias vezes: guardamos a que categoria e a
+    # que mês (ex: "2026-10") esse alerta se refere.
+    categoria_id: Mapped[int | None] = mapped_column(ForeignKey("categorias.id"), nullable=True)
+    referencia_mes: Mapped[str | None] = mapped_column(String(7), nullable=True)  # "AAAA-MM"
+
 class ReceitaORM(TransacaoORM):
     __mapper_args__ = {"polymorphic_identity": "receita"}
 
