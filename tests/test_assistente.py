@@ -27,7 +27,7 @@ def _preparar_dados(sessao):
 def test_pergunta_sobre_saldo(sessao):
     usuario_id = _preparar_dados(sessao)
     resposta = responder(sessao, usuario_id, "qual meu saldo?")
-    assert "2,550" in resposta or "2550" in resposta
+    assert "2.550" in resposta  # formato brasileiro: R$ 2.550,00
 
 
 def test_pergunta_sobre_gasto_total(sessao):
