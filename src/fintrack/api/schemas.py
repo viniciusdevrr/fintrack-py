@@ -135,3 +135,14 @@ class SimulacaoSaida(BaseModel):
     categoria: str | None = None
     gasto_atual_categoria: float | None = None
     gasto_projetado_categoria: float | None = None
+
+
+# ---------- Assistente ----------
+
+
+class PerguntaEntrada(BaseModel):
+    pergunta: str
+
+
+class RespostaSaida(BaseModel):
+    resposta: str
