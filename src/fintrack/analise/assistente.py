@@ -3,17 +3,19 @@ from sqlalchemy.orm import Session
 
 from fintrack.analise.relatorios import resumo_do_mes, gastos_por_categoria, comparativo_mensal
 
-def _formatar_real(valor: float) -> str:
-    """Formata um número no padrão brasileiro: R$ 1.234,56"""
-    texto = f"{valor:,.2f}"
-    texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"R$ {texto}"
 
 def _normalizar(texto: str) -> str:
     """Remove acentos simples e põe em minúsculo, para comparação mais tolerante."""
     texto = texto.lower().strip()
     substituicoes = str.maketrans("áàâãéêíóôõúç", "aaaaeeiooouc")
     return texto.translate(substituicoes)
+
+
+def _formatar_real(valor: float) -> str:
+    """Formata um número no padrão brasileiro: R$ 1.234,56"""
+    texto = f"{valor:,.2f}"
+    texto = texto.replace(",", "X").replace(".", ",").replace("X", ".")
+    return f"R$ {texto}"
 
 
 def _extrair_categoria(pergunta: str, categorias_existentes: list[str]) -> str | None:
@@ -37,14 +39,18 @@ def responder(sessao: Session, usuario_id: int, pergunta: str) -> str:
     if re.search(r"\b(saldo|sobrou|sobra)\b", pergunta_normalizada):
         resumo = resumo_do_mes(sessao, usuario_id)
         if resumo["saldo"] >= 0:
-            return f"Seu saldo este mês está positivo: R$ {resumo['saldo']:,.2f}."
-        return f"Atenção: seu saldo este mês está negativo em R$ {_formatar_real(resumo['saldo'])}."
+            return f"Seu saldo este mês está positivo: {_formatar_real(resumo['saldo'])}."
+        return f"Atenção: seu saldo este mês está negativo em {_formatar_real(abs(resumo['saldo']))}."
 
     # --- Intenção 2: quanto gastei no total ---
-    if re.search(r"\b(quanto gastei|total de gastos|total de despesas)\b", pergunta_normalizada) \
+    # ".*" entre as palavras permite frases como "quanto EU gastei", "quanto já gastei" etc.
+    if re.search(r"quanto.*gastei|total de gastos|total de despesas", pergunta_normalizada) \
             and not _extrair_categoria(pergunta_normalizada, categorias_existentes):
         resumo = resumo_do_mes(sessao, usuario_id)
-        return f"Você gastou R$ {resumo['despesas']:,.2f} este mês, de um total de R$ {resumo['receitas']:,.2f} em receitas."
+        return (
+            f"Você gastou {_formatar_real(resumo['despesas'])} este mês, "
+            f"de um total de {_formatar_real(resumo['receitas'])} em receitas."
+        )
 
     # --- Intenção 3: gasto por categoria específica ---
     categoria = _extrair_categoria(pergunta_normalizada, categorias_existentes)
@@ -52,14 +58,14 @@ def responder(sessao: Session, usuario_id: int, pergunta: str) -> str:
         valor = gastos.get(categoria, 0.0)
         if valor == 0:
             return f"Você ainda não registrou gastos em {categoria} este mês."
-        return f"Você gastou R$ {valor:,.2f} em {categoria} este mês."
+        return f"Você gastou {_formatar_real(valor)} em {categoria} este mês."
 
     # --- Intenção 4: qual categoria eu mais gasto ---
     if re.search(r"\b(mais gasto|maior gasto|onde gasto mais)\b", pergunta_normalizada):
         if not gastos:
             return "Você ainda não tem despesas registradas este mês."
         categoria_top = max(gastos, key=gastos.get)
-        return f"Sua maior categoria de gasto este mês é {categoria_top}, com R$ {gastos[categoria_top]:,.2f}."
+        return f"Sua maior categoria de gasto este mês é {categoria_top}, com {_formatar_real(gastos[categoria_top])}."
 
     # --- Intenção 5: comparação com mês anterior ---
     if re.search(r"\b(mes passado|mes anterior|comparado)\b", pergunta_normalizada):
@@ -69,9 +75,9 @@ def responder(sessao: Session, usuario_id: int, pergunta: str) -> str:
         atual, anterior = comparativo[-1], comparativo[-2]
         diferenca = atual["despesas"] - anterior["despesas"]
         if diferenca > 0:
-            return f"Você gastou R$ {diferenca:,.2f} a mais que no mês anterior."
+            return f"Você gastou {_formatar_real(diferenca)} a mais que no mês anterior."
         elif diferenca < 0:
-            return f"Você gastou R$ {abs(diferenca):,.2f} a menos que no mês anterior."
+            return f"Você gastou {_formatar_real(abs(diferenca))} a menos que no mês anterior."
         return "Seus gastos ficaram praticamente iguais ao mês anterior."
 
     # --- Nenhuma intenção reconhecida ---
