@@ -31,7 +31,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen bg-base-1">
-      <AuthBrandPanel />
 
       <div className="flex flex-1 items-center justify-center px-4 py-12">
         <motion.div
