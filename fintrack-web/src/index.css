@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg-page: 255 255 255;
+  --bg-card: 248 249 251;
+  --bg-elevated: 241 243 246;
+  --text-primary: 11 14 20;
+  --text-secondary: 100 108 122;
+  --border: 228 231 236;
+}
+
+.dark {
+  --bg-page: 11 14 20;
+  --bg-card: 18 21 28;
+  --bg-elevated: 26 30 39;
+  --text-primary: 245 247 250;
+  --text-secondary: 148 157 172;
+  --border: 36 41 52;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+body {
+  background: rgb(var(--bg-page));
+  color: rgb(var(--text-primary));
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar discreta, no estilo de produtos SaaS premium */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--border)); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--text-secondary) / 0.4); }
