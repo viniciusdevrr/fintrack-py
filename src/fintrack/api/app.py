@@ -11,6 +11,8 @@ from fintrack.api.rotas_relatorio import roteador as roteador_relatorio
 from fintrack.api.rotas_simulador import roteador as roteador_simulador
 from fintrack.api.rotas_assistente import roteador as roteador_assistente
 
+from fastapi.middleware.cors import CORSMiddleware
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +28,13 @@ app = FastAPI(
     description="API do aplicativo de finanças pessoais FinTrack.",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 app.include_router(roteador_auth)
