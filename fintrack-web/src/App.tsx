@@ -7,6 +7,9 @@ import SignupPage from "./pages/auth/SignupPage";
 import AppLayout from "./components/layout/AppLayout";
 import PaginaEmBreve from "./components/PaginaEmBreve";
 import DashboardPage from "./pages/DashboardPage";
+import CategoriasPage from "./pages/CategoriasPage";
+import CartoesPage from "./pages/CartoesPage";
+import MetasPage from "./pages/MetasPage";
 
 function estaAutenticado() {
   return Boolean(localStorage.getItem("fintrack_token"));
@@ -57,9 +60,9 @@ export default function App() {
             >
               <Route path="/" element={<DashboardPage />} />
               <Route path="/transacoes" element={<PaginaEmBreve nome="Transações" />} />
-              <Route path="/categorias" element={<PaginaEmBreve nome="Categorias" />} />
-              <Route path="/cartoes" element={<PaginaEmBreve nome="Cartões" />} />
-              <Route path="/metas" element={<PaginaEmBreve nome="Metas" />} />
+              <Route path="/categorias" element={<CategoriasPage />} />
+              <Route path="/cartoes" element={<CartoesPage />} />
+              <Route path="/metas" element={<MetasPage />} />
               <Route path="/relatorios" element={<PaginaEmBreve nome="Relatórios" />} />
               <Route path="/simulador" element={<PaginaEmBreve nome="Simulador" />} />
               <Route path="/assistente" element={<PaginaEmBreve nome="Assistente" />} />
