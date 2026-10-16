@@ -10,6 +10,8 @@ import DashboardPage from "./pages/DashboardPage";
 import CategoriasPage from "./pages/CategoriasPage";
 import CartoesPage from "./pages/CartoesPage";
 import MetasPage from "./pages/MetasPage";
+import TransacoesPage from "./pages/TransacoesPage";
+import RelatoriosPage from "./pages/RelatoriosPage";
 
 function estaAutenticado() {
   return Boolean(localStorage.getItem("fintrack_token"));
@@ -27,25 +29,26 @@ export default function App() {
     const jaViuIntro = sessionStorage.getItem("fintrack_intro_vista");
     if (jaViuIntro) {
       setMostrarSplash(false);
-      return;
     }
-    const timer = setTimeout(() => {
-      setMostrarSplash(false);
-      sessionStorage.setItem("fintrack_intro_vista", "true");
-    }, 2600);
-    return () => clearTimeout(timer);
   }, []);
+
+  // Chamado automaticamente quando a barra de progresso atinge 100%
+  function handleSplashComplete() {
+    setMostrarSplash(false);
+    sessionStorage.setItem("fintrack_intro_vista", "true");
+  }
 
   return (
     <AnimatePresence mode="wait">
       {mostrarSplash ? (
-        <SplashScreen key="splash" />
+        <SplashScreen key="splash" onFinish={handleSplashComplete} />
       ) : (
         <motion.div
           key="app"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.5 }}
+          className="min-h-screen bg-[#0b0f19] text-slate-100"
         >
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -59,14 +62,16 @@ export default function App() {
               }
             >
               <Route path="/" element={<DashboardPage />} />
-              <Route path="/transacoes" element={<PaginaEmBreve nome="Transações" />} />
+              <Route path="/transacoes" element={<TransacoesPage />} />
               <Route path="/categorias" element={<CategoriasPage />} />
               <Route path="/cartoes" element={<CartoesPage />} />
               <Route path="/metas" element={<MetasPage />} />
-              <Route path="/relatorios" element={<PaginaEmBreve nome="Relatórios" />} />
+              <Route path="/relatorios" element={<RelatoriosPage />} />
               <Route path="/simulador" element={<PaginaEmBreve nome="Simulador" />} />
               <Route path="/assistente" element={<PaginaEmBreve nome="Assistente" />} />
             </Route>
+
+            <Route path="*" element={<Navigate to={estaAutenticado() ? "/" : "/login"} replace />} />
           </Routes>
         </motion.div>
       )}
