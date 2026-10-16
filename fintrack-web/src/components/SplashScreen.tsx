@@ -1,44 +1,50 @@
 import { motion } from "framer-motion";
 import Logo from "./Logo";
 
+interface SplashScreenProps {
+  onFinish?: () => void;
+}
+
 /**
- * Tela de abertura do app. Mostra a logo com uma animação de entrada,
- * um leve "respirar" de brilho enquanto fica parada, e depois é removida
- * pelo App.tsx (que já cuida da transição de saída suave até o login).
+ * Tela de carregamento com exibição da logo, barra de progresso cadenciada
+ * e redirecionamento automático para o login assim que o carregamento é concluído.
  */
-export default function SplashScreen() {
+export default function SplashScreen({ onFinish }: SplashScreenProps) {
   return (
     <motion.div
       key="splash"
-      exit={{ opacity: 0, scale: 1.08 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-base-1"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0b0f19] select-none"
     >
       <div className="relative flex flex-col items-center">
-        {/* Brilho pulsante atrás da logo — efeito "respirando" */}
-        <motion.div
-          animate={{ opacity: [0.25, 0.55, 0.25], scale: [1, 1.15, 1] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-          className="pointer-events-none absolute h-40 w-40 rounded-full bg-brand-500/30 blur-3xl"
-        />
+        {/* Brilho de fundo na cor principal #FF9B03 */}
+        <div className="pointer-events-none absolute h-64 w-64 rounded-full bg-[#FF9B03]/25 blur-3xl animate-pulse" />
 
-        {/* Logo: entra com fade + leve escala, por cima do brilho */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative"
-        >
+        {/* Logo em destaque visual */}
+        <div className="relative scale-100 opacity-100">
           <Logo size="hero" />
-        </motion.div>
+        </div>
 
-        {/* Barra de carregamento decorativa, reforça a sensação de "abrindo" */}
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: 72 }}
-          transition={{ duration: 1.3, delay: 0.4, ease: "easeInOut" }}
-          className="relative mt-8 h-[3px] rounded-full bg-brand-500/60"
-        />
+        {/* Trilho da Barra de Progresso */}
+        <div className="relative mt-10 h-[4px] w-[200px] overflow-hidden rounded-full bg-slate-800/80 border border-slate-700/50">
+          {/* Preenchimento gradual da barra */}
+          <motion.div
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 2, ease: "easeInOut" }} 
+            onAnimationComplete={() => {
+              if (onFinish) onFinish();
+            }}
+            className="h-full bg-gradient-to-r from-[#FF9B03] to-amber-400 rounded-full shadow-[0_0_12px_rgba(255,155,3,0.8)]"
+          />
+        </div>
+
+        {/* Indicador textual opcional para reforçar o carregamento */}
+        <p className="mt-3 text-xs font-medium text-slate-400 tracking-wider">
+          Carregando painel financeiro...
+        </p>
       </div>
     </motion.div>
   );
