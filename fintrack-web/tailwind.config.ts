@@ -21,17 +21,17 @@ export default {
         },
         brand: {
           50: "#FFFBEB",
-          400: "#FBBF24",
-          500: "#F5A623", // tom principal — combina com o dourado da logo
-          600: "#D98C0F",
-          700: "#B5730A",
+          400: "#FF9B03",
+          500: "#FF9B03", // Cor principal solicitada
+          600: "#e28800",
+          700: "#c57600",
         },
         danger: {
           400: "#F87171",
           500: "#EF4444",
         },
         warning: {
-          400: "#FBBF24",
+          400: "#FF9B03",
           500: "#F59E0B",
         },
       },
