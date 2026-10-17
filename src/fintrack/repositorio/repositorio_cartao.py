@@ -5,10 +5,8 @@ from .modelos_orm import CartaoORM
 
 def salvar(sessao: Session, cartao: Cartao, usuario_id: int) -> int:
     registro = CartaoORM(
-        nome=cartao.nome,
-        limite=cartao.limite,
-        dia_fechamento=cartao.dia_fechamento,
-        dia_vencimento=cartao.dia_vencimento,
+        nome=cartao.nome, limite=cartao.limite,
+        dia_fechamento=cartao.dia_fechamento, dia_vencimento=cartao.dia_vencimento,
         usuario_id=usuario_id,
     )
     sessao.add(registro)

@@ -10,6 +10,7 @@ from fintrack.api.rotas_conta import roteador as roteador_conta
 from fintrack.api.rotas_relatorio import roteador as roteador_relatorio
 from fintrack.api.rotas_simulador import roteador as roteador_simulador
 from fintrack.api.rotas_assistente import roteador as roteador_assistente
+from fintrack.api.rotas_cartao import roteador as roteador_cartao
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -45,6 +46,7 @@ app.include_router(roteador_conta)
 app.include_router(roteador_relatorio)
 app.include_router(roteador_simulador)
 app.include_router(roteador_assistente)
+app.include_router(roteador_cartao)
 
 
 @app.get("/", tags=["Status"])
