@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import Logo from "../Logo";
-import ThemeToggle from "./ThemeToggle";
 import { itensNavegacao } from "../../lib/navegacao";
 import { cn } from "../../lib/utils";
 
@@ -15,9 +14,8 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden h-screen w-64 flex-col border-r border-[rgb(var(--border))] bg-base-2 px-4 py-5 md:flex">
-      <div className="mb-8 flex items-center justify-between px-1">
+      <div className="mb-8 px-1">
         <Logo size="compacto" />
-        <ThemeToggle />
       </div>
 
       <nav className="flex-1 space-y-1">
