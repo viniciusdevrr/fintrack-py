@@ -5,13 +5,15 @@ import SplashScreen from "./components/SplashScreen";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import AppLayout from "./components/layout/AppLayout";
-import PaginaEmBreve from "./components/PaginaEmBreve";
 import DashboardPage from "./pages/DashboardPage";
 import CategoriasPage from "./pages/CategoriasPage";
 import CartoesPage from "./pages/CartoesPage";
 import MetasPage from "./pages/MetasPage";
 import TransacoesPage from "./pages/TransacoesPage";
 import RelatoriosPage from "./pages/RelatoriosPage";
+import SimuladorPage from "./pages/SimuladorPage";
+import AssistentePage from "./pages/AssistentePage";
+
 
 function estaAutenticado() {
   return Boolean(localStorage.getItem("fintrack_token"));
@@ -67,8 +69,8 @@ export default function App() {
               <Route path="/cartoes" element={<CartoesPage />} />
               <Route path="/metas" element={<MetasPage />} />
               <Route path="/relatorios" element={<RelatoriosPage />} />
-              <Route path="/simulador" element={<PaginaEmBreve nome="Simulador" />} />
-              <Route path="/assistente" element={<PaginaEmBreve nome="Assistente" />} />
+              <Route path="/simulador" element={<SimuladorPage />} />
+              <Route path="/assistente" element={<AssistentePage />} />
             </Route>
 
             <Route path="*" element={<Navigate to={estaAutenticado() ? "/" : "/login"} replace />} />
