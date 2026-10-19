@@ -54,3 +54,13 @@ def grafico_comparativo(
     dados = relatorios.comparativo_mensal(sessao, usuario_id)
     imagem = graficos.grafico_comparativo_mensal(dados)
     return Response(content=imagem, media_type="image/png")
+
+
+@roteador.get("/gastos-por-categoria-periodo")
+def gastos_por_categoria_periodo(
+    meses: int = 6,
+    sessao: Session = Depends(obter_sessao),
+    autenticado=Depends(obter_usuario_atual),
+):
+    _, usuario_id = autenticado
+    return relatorios.gastos_por_categoria_periodo(sessao, usuario_id, meses)

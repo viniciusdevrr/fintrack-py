@@ -100,3 +100,18 @@ def comparativo_mensal(sessao: Session, usuario_id: int, ultimos_n_meses: int = 
         }
         for mes, linha in tabela.iterrows()
     ]
+
+
+def gastos_por_categoria_periodo(sessao: Session, usuario_id: int, ultimos_n_meses: int = 6) -> dict[str, float]:
+    """Soma de despesas por categoria, somando os últimos N meses (não só o mês atual).
+    Serve para identificar onde a pessoa mais gasta ao longo do tempo."""
+    df = _buscar_transacoes_df(sessao, usuario_id)
+    if df.empty:
+        return {}
+
+    meses_existentes = sorted(df["mes"].unique())
+    meses_considerados = meses_existentes[-ultimos_n_meses:]
+
+    despesas = df[(df["mes"].isin(meses_considerados)) & (df["tipo"].isin(["despesa", "despesa_cartao"]))]
+    agrupado = despesas.groupby("categoria")["valor"].sum().sort_values(ascending=False)
+    return {categoria: round(float(valor), 2) for categoria, valor in agrupado.items()}
