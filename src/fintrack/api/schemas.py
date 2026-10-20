@@ -60,6 +60,24 @@ class CartaoSaida(BaseModel):
     limite_disponivel: float
 
 
+class CategoriaAtualizar(BaseModel):
+    nome: str | None = None
+    tipo: str | None = None
+    limite_mensal: float | None = None
+
+
+class CartaoAtualizar(BaseModel):
+    nome: str | None = None
+    limite: float | None = None
+    dia_fechamento: int | None = None
+    dia_vencimento: int | None = None
+
+
+class CompraCartaoEntrada(BaseModel):
+    descricao: str
+    valor: float
+    parcelas: int = 1
+    
 # ---------- Meta ----------
 
 class MetaCriar(BaseModel):
@@ -79,6 +97,12 @@ class MetaSaida(BaseModel):
     valor_atual: float
     progresso_percentual: float
     concluida: bool
+
+
+class MetaAtualizar(BaseModel):
+    nome: str | None = None
+    valor_alvo: float | None = None
+    data_limite: date | None = None
 
 
 # ---------- Conta / Transação ----------
