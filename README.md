@@ -111,16 +111,18 @@ A aplicação fica disponível em `http://localhost:5173`.
 
 O backend requer um arquivo `.env` na raiz do projeto, com base no modelo disponível em `.env.example`:
 
+```bash
 SECRET_KEY=sua-chave-secreta-aqui
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 DATABASE_URL=sqlite:///./fintrack.db
+```
 
 ## Testes
 
 Certifique-se de que o ambiente virtual está ativado antes de rodar os testes.
 
-```
+```bash
 python -m pytest -v
 ```
 
