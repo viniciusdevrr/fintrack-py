@@ -66,6 +66,7 @@ Neon (PostgreSQL), Render (backend) e Vercel (frontend), com suporte a PWA via v
 
 ## Estrutura do projeto
 
+```bash
 fintrack-py/
 src/fintrack/
 modelos/ Classes de dominio (POO)
@@ -80,6 +81,7 @@ src/
 pages/ Telas do aplicativo
 components/ Componentes reutilizaveis
 lib/ Cliente de API e utilitarios
+```
 
 ## Como executar o projeto localmente
 
@@ -149,6 +151,8 @@ Este projeto está licenciado sob os termos da licença MIT.
 
 ## Autor
 
-**Vinícius Rodrigues Rocha**
-**GitHub: github.com/viniciusdevrr**
-**LinkedIn: linkedin.com/in/viniciusrodriguesdf**
+```bash
+Vinícius Rodrigues Rocha
+GitHub: github.com/viniciusdevrr
+LinkedIn: linkedin.com/in/viniciusrodriguesdf
+```
