@@ -149,6 +149,6 @@ Este projeto está licenciado sob os termos da licença MIT.
 
 ## Autor
 
-Vinícius Rodrigues Rocha
-GitHub: github.com/viniciusdevrr
-LinkedIn: linkedin.com/in/viniciusrodriguesdf
+**Vinícius Rodrigues Rocha**
+**GitHub: github.com/viniciusdevrr**
+**LinkedIn: linkedin.com/in/viniciusrodriguesdf**
