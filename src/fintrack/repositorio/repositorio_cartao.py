@@ -10,7 +10,7 @@ def salvar(sessao: Session, cartao: Cartao, usuario_id: int) -> int:
     registro = CartaoORM(
         nome=cartao.nome, limite=cartao.limite,
         dia_fechamento=cartao.dia_fechamento, dia_vencimento=cartao.dia_vencimento,
-        usuario_id=usuario_id,
+        usuario_id=usuario_id, cor=cartao.cor,
     )
     sessao.add(registro)
     sessao.commit()
@@ -66,7 +66,7 @@ def excluir(sessao: Session, cartao_id: int, usuario_id: int) -> bool:
 
 
 def registrar_compra(sessao: Session, cartao_id: int, usuario_id: int,
-                      descricao: str, valor: float, parcelas: int) -> int:
+                      descricao: str, valor: float, parcelas: int, categoria_id: int | None) -> int:
     cartao_registro = sessao.query(CartaoORM).filter_by(id=cartao_id, usuario_id=usuario_id).first()
     if cartao_registro is None:
         raise FinTrackError("Cartão não encontrado.")
@@ -75,9 +75,6 @@ def registrar_compra(sessao: Session, cartao_id: int, usuario_id: int,
     if conta is None:
         raise FinTrackError("Crie uma conta antes de lançar compras no cartão.")
 
-    # Reconstrói o cartão com o histórico de compras e tenta registrar a nova
-    # compra nele — se ultrapassar o limite, o próprio domínio recusa aqui,
-    # antes de qualquer gravação no banco.
     cartao_dominio = _para_dominio_completo(sessao, cartao_registro)
     nova_compra = DespesaCartao(descricao, valor, cartao_dominio, parcelas)
     cartao_dominio.registrar_compra(nova_compra)
@@ -85,6 +82,7 @@ def registrar_compra(sessao: Session, cartao_id: int, usuario_id: int,
     registro = DespesaCartaoORM(
         descricao=descricao, valor=valor, data=date.today(),
         conta_id=conta.id, cartao_id=cartao_id, parcelas=parcelas,
+        categoria_id=categoria_id,
     )
     sessao.add(registro)
     sessao.commit()
@@ -93,7 +91,7 @@ def registrar_compra(sessao: Session, cartao_id: int, usuario_id: int,
 
 
 def _para_dominio(registro: CartaoORM) -> Cartao:
-    return Cartao(registro.nome, registro.limite, registro.dia_fechamento, registro.dia_vencimento)
+    return Cartao(registro.nome, registro.limite, registro.dia_fechamento, registro.dia_vencimento, registro.cor)
 
 
 def _para_dominio_completo(sessao: Session, registro: CartaoORM) -> Cartao:

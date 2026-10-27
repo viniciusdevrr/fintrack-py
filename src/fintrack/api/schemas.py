@@ -50,6 +50,7 @@ class CartaoCriar(BaseModel):
     limite: float
     dia_fechamento: int = Field(ge=1, le=28)
     dia_vencimento: int = Field(ge=1, le=28)
+    cor: str = "#FF9B03"
 
 
 class CartaoSaida(BaseModel):
@@ -58,6 +59,9 @@ class CartaoSaida(BaseModel):
     limite: float
     fatura_atual: float
     limite_disponivel: float
+    cor: str
+    fatura_fechada: bool
+    vencimento_proximo: bool
 
 
 class CategoriaAtualizar(BaseModel):
@@ -77,6 +81,7 @@ class CompraCartaoEntrada(BaseModel):
     descricao: str
     valor: float
     parcelas: int = 1
+    categoria_id: int | None = None
     
 # ---------- Meta ----------
 
