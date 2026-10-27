@@ -13,10 +13,9 @@ export default function MobileNav() {
             end={to === "/"}
             className={({ isActive }) =>
               cn(
-                "flex min-w-[45px] flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
+                "flex min-w-[40px] flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium transition-colors",
                 isActive ? "text-[#FF9B03]" : "text-slate-400"
               )
-              
             }
           >
             <Icone className="h-5 w-5" />
