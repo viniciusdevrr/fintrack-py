@@ -1,11 +1,18 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import Logo from "../Logo";
 import { itensNavegacao } from "../../lib/navegacao";
+import { cartaoApi } from "../../lib/api";
 import { cn } from "../../lib/utils";
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const [alertaCartao, setAlertaCartao] = useState(false);
+
+  useEffect(() => {
+    cartaoApi.temAlertaPendente().then(setAlertaCartao).catch(() => setAlertaCartao(false));
+  }, []);
 
   function sair() {
     localStorage.removeItem("fintrack_token");
@@ -26,7 +33,7 @@ export default function Sidebar() {
             end={to === "/"}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors",
+                "relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
                   ? "border-[#FF9B03]/30 bg-gradient-to-r from-[#FF9B03]/20 to-transparent text-[#FF9B03]"
                   : "border-transparent text-slate-400 hover:bg-white/5 hover:text-white"
@@ -35,6 +42,9 @@ export default function Sidebar() {
           >
             <Icone className="h-[18px] w-[18px]" />
             {label}
+            {to ==="/cartoes" && alertaCartao && (
+              <span className="absolute right-3 h-2 w-2 rounded-full bg-red-500" /> 
+            )}
           </NavLink>
         ))}
       </nav>
