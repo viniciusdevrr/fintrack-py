@@ -24,6 +24,9 @@ export interface Cartao {
   limite: number;
   fatura_atual: number;
   limite_disponivel: number;
+  cor: string;
+  fatura_fechada: boolean;
+  vencimento_proximo: boolean;
 }
 
 export interface Meta {
