@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Pencil, Plus, Receipt, Trash2 } from "lucide-react";
-import { cartaoApi } from "../lib/api";
-import type { Cartao } from "../types";
+import { AlertTriangle, CheckCircle2, CreditCard, Pencil, Plus, Receipt, Trash2 } from "lucide-react";
+import { cartaoApi, categoriaApi } from "../lib/api";
+import type { Cartao, Categoria } from "../types";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import { Select } from "../components/ui/Select";
+import { ColorPicker } from "../components/ui/ColorPicker";
 import Modal from "../components/ui/Modal";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import EmptyState from "../components/ui/EmptyState";
@@ -13,6 +15,7 @@ import { formatarReal } from "../lib/utils";
 
 export default function CartoesPage() {
   const [cartoes, setCartoes] = useState<Cartao[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erroCarregamento, setErroCarregamento] = useState("");
 
@@ -22,6 +25,7 @@ export default function CartoesPage() {
   const [limite, setLimite] = useState("");
   const [fechamento, setFechamento] = useState("5");
   const [vencimento, setVencimento] = useState("12");
+  const [cor, setCor] = useState("#FF9B03");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -29,16 +33,20 @@ export default function CartoesPage() {
   const [descricaoCompra, setDescricaoCompra] = useState("");
   const [valorCompra, setValorCompra] = useState("");
   const [parcelasCompra, setParcelasCompra] = useState("1");
+  const [categoriaCompraId, setCategoriaCompraId] = useState("");
   const [erroCompra, setErroCompra] = useState("");
   const [salvandoCompra, setSalvandoCompra] = useState(false);
 
   const [excluindoId, setExcluindoId] = useState<number | null>(null);
+  const [pagandoId, setPagandoId] = useState<number | null>(null);
 
   async function carregar() {
     setCarregando(true);
     setErroCarregamento("");
     try {
-      setCartoes(await cartaoApi.listar());
+      const [c, cat] = await Promise.all([cartaoApi.listar(), categoriaApi.listar()]);
+      setCartoes(c);
+      setCategorias(cat);
     } catch (e) {
       setErroCarregamento(e instanceof Error ? e.message : "Não foi possível carregar seus cartões.");
     } finally {
@@ -50,7 +58,7 @@ export default function CartoesPage() {
 
   function abrirCriar() {
     setEditandoId(null);
-    setNome(""); setLimite(""); setFechamento("5"); setVencimento("12");
+    setNome(""); setLimite(""); setFechamento("5"); setVencimento("12"); setCor("#FF9B03");
     setModalAberto(true);
   }
 
@@ -68,7 +76,7 @@ export default function CartoesPage() {
       if (editandoId) {
         await cartaoApi.atualizar(editandoId, { nome, limite: parseFloat(limite) });
       } else {
-        await cartaoApi.criar({ nome, limite: parseFloat(limite), dia_fechamento: parseInt(fechamento), dia_vencimento: parseInt(vencimento) });
+        await cartaoApi.criar({ nome, limite: parseFloat(limite), dia_fechamento: parseInt(fechamento), dia_vencimento: parseInt(vencimento), cor });
       }
       setModalAberto(false);
       carregar();
@@ -77,6 +85,11 @@ export default function CartoesPage() {
     } finally {
       setSalvando(false);
     }
+  }
+
+  function abrirCompra(cartaoId: number) {
+    setComprandoId(cartaoId);
+    setDescricaoCompra(""); setValorCompra(""); setParcelasCompra("1"); setCategoriaCompraId(""); setErroCompra("");
   }
 
   async function handleCompra(e: FormEvent) {
@@ -89,9 +102,9 @@ export default function CartoesPage() {
         descricao: descricaoCompra,
         valor: parseFloat(valorCompra),
         parcelas: parseInt(parcelasCompra) || 1,
+        categoria_id: categoriaCompraId ? parseInt(categoriaCompraId) : null,
       });
       setComprandoId(null);
-      setDescricaoCompra(""); setValorCompra(""); setParcelasCompra("1");
       carregar();
     } catch (e) {
       setErroCompra(e instanceof Error ? e.message : "Não foi possível lançar a compra.");
@@ -106,6 +119,17 @@ export default function CartoesPage() {
     setExcluindoId(null);
     carregar();
   }
+
+  async function confirmarPagamento() {
+    if (!pagandoId) return;
+    await cartaoApi.pagarFatura(pagandoId);
+    setPagandoId(null);
+    carregar();
+  }
+
+  const opcoesCategoriaDespesa = categorias
+    .filter((c) => c.tipo === "despesa")
+    .map((c) => ({ value: String(c.id), label: c.nome }));
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -131,12 +155,25 @@ export default function CartoesPage() {
             const usoPercentual = Math.min(100, (c.fatura_atual / c.limite) * 100);
             return (
               <motion.div key={c.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <GlassCard className="group relative overflow-hidden">
-                  <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full bg-[#FF9B03]/15 blur-2xl" />
+                <GlassCard
+                  className="group relative overflow-hidden"
+                  style={c.fatura_fechada ? { borderColor: "rgba(239,68,68,0.5)" } : undefined}
+                >
+                  <div className="pointer-events-none absolute -right-6 -top-6 h-28 w-28 rounded-full blur-2xl" style={{ background: `${c.cor}26` }} />
+
+                  {c.fatura_fechada && (
+                    <div className="relative mb-3 flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400">
+                      <AlertTriangle className="h-3.5 w-3.5" /> Fatura fechada — vencimento em breve
+                    </div>
+                  )}
+
                   <div className="relative flex items-center justify-between">
-                    <p className="font-semibold text-white">{c.nome}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.cor }} />
+                      <p className="font-semibold text-white">{c.nome}</p>
+                    </div>
                     <div className="flex items-center gap-1">
-                      <CreditCard className="h-5 w-5 text-[#FF9B03]" />
+                      <CreditCard className="h-5 w-5" style={{ color: c.cor }} />
                       <div className="ml-1 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                         <button onClick={() => abrirEditar(c)} className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-white/5 hover:text-white">
                           <Pencil className="h-3.5 w-3.5" />
@@ -152,16 +189,27 @@ export default function CartoesPage() {
                   <p className="relative text-xl font-bold text-white">{formatarReal(c.fatura_atual)}</p>
 
                   <div className="relative mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full rounded-full bg-[#FF9B03]" style={{ width: `${usoPercentual}%` }} />
+                    <div className="h-full rounded-full transition-all" style={{ width: `${usoPercentual}%`, background: c.cor }} />
                   </div>
                   <p className="relative mt-1.5 text-xs text-slate-400">{formatarReal(c.limite_disponivel)} disponível de {formatarReal(c.limite)}</p>
 
-                  <button
-                    onClick={() => { setComprandoId(c.id); setDescricaoCompra(""); setValorCompra(""); setParcelasCompra("1"); setErroCompra(""); }}
-                    className="relative mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#FF9B03]/30 bg-[#FF9B03]/10 py-2 text-xs font-medium text-[#FF9B03] transition-colors hover:bg-[#FF9B03]/20"
-                  >
-                    <Receipt className="h-3.5 w-3.5" /> Lançar compra
-                  </button>
+                  <div className="relative mt-4 flex gap-2">
+                    <button
+                      onClick={() => abrirCompra(c.id)}
+                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-medium transition-colors"
+                      style={{ borderColor: `${c.cor}4D`, background: `${c.cor}1A`, color: c.cor }}
+                    >
+                      <Receipt className="h-3.5 w-3.5" /> Lançar compra
+                    </button>
+                    {c.fatura_fechada && (
+                      <button
+                        onClick={() => setPagandoId(c.id)}
+                        className="flex items-center justify-center gap-1.5 rounded-xl border border-[#04eb51]/30 bg-[#04eb51]/10 px-3 py-2 text-xs font-medium text-[#04eb51] transition-colors hover:bg-[#04eb51]/20"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Fatura paga
+                      </button>
+                    )}
+                  </div>
                 </GlassCard>
               </motion.div>
             );
@@ -175,10 +223,13 @@ export default function CartoesPage() {
           <Input label="Nome do cartão" placeholder="Ex: Nubank" value={nome} onChange={(e) => setNome(e.target.value)} required />
           <Input type="number" step="0.01" label="Limite" value={limite} onChange={(e) => setLimite(e.target.value)} required />
           {!editandoId && (
-            <div className="grid grid-cols-2 gap-3">
-              <Input type="number" min={1} max={28} label="Dia de fechamento" value={fechamento} onChange={(e) => setFechamento(e.target.value)} required />
-              <Input type="number" min={1} max={28} label="Dia de vencimento" value={vencimento} onChange={(e) => setVencimento(e.target.value)} required />
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <Input type="number" min={1} max={28} label="Dia de fechamento" value={fechamento} onChange={(e) => setFechamento(e.target.value)} required />
+                <Input type="number" min={1} max={28} label="Dia de vencimento" value={vencimento} onChange={(e) => setVencimento(e.target.value)} required />
+              </div>
+              <ColorPicker value={cor} onChange={setCor} />
+            </>
           )}
           <Button type="submit" className="w-full" loading={salvando}>{editandoId ? "Salvar alterações" : "Criar cartão"}</Button>
         </form>
@@ -190,6 +241,13 @@ export default function CartoesPage() {
           <Input label="Descrição" placeholder="Ex: Notebook" value={descricaoCompra} onChange={(e) => setDescricaoCompra(e.target.value)} required autoFocus />
           <Input type="number" step="0.01" label="Valor total" value={valorCompra} onChange={(e) => setValorCompra(e.target.value)} required />
           <Input type="number" min={1} max={24} label="Número de parcelas" value={parcelasCompra} onChange={(e) => setParcelasCompra(e.target.value)} required />
+          <Select
+            label="Categoria"
+            value={categoriaCompraId}
+            onChange={setCategoriaCompraId}
+            placeholder="Selecione uma categoria"
+            options={opcoesCategoriaDespesa}
+          />
           <Button type="submit" className="w-full" loading={salvandoCompra}>Lançar compra</Button>
         </form>
       </Modal>
@@ -200,6 +258,14 @@ export default function CartoesPage() {
         mensagem="Tem certeza? O histórico de compras desse cartão também será removido."
         aoConfirmar={confirmarExclusao}
         aoCancelar={() => setExcluindoId(null)}
+      />
+
+      <ConfirmDialog
+        aberto={pagandoId !== null}
+        titulo="Confirmar pagamento da fatura"
+        mensagem="Isso vai marcar a fatura atual como paga e remover o alerta de vencimento até o próximo ciclo."
+        aoConfirmar={confirmarPagamento}
+        aoCancelar={() => setPagandoId(null)}
       />
     </div>
   );
