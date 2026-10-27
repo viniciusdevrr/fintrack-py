@@ -34,7 +34,9 @@ class CartaoORM(Base):
     limite: Mapped[float] = mapped_column(Float)
     dia_fechamento: Mapped[int] = mapped_column(Integer)
     dia_vencimento: Mapped[int] = mapped_column(Integer)
-    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))  # NOVO
+    usuario_id: Mapped[int] = mapped_column(ForeignKey("usuarios.id"))
+    cor: Mapped[str] = mapped_column(String(20), default="#FF9B03")  # NOVO
+    fatura_paga_mes: Mapped[str | None] = mapped_column(String(7), nullable=True)  # NOVO — controla o "pop" de notificação
 
 
 class MetaORM(Base):
