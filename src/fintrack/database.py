@@ -1,18 +1,23 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# SQLite salva tudo num arquivo local chamado fintrack.db, na raiz do projeto.
-# Mais pra frente, na fase de deploy, só trocamos essa URL por uma do PostgreSQL
-# — o resto do código nem precisa mudar, essa é a grande vantagem do ORM.
-DATABASE_URL = "sqlite:///./fintrack.db"
+load_dotenv()
 
-engine = create_engine(DATABASE_URL, echo=False)
+# Em produção (Render), DATABASE_URL vem como variável de ambiente, apontando
+# para o Postgres do Neon. Localmente, se essa variável não existir, caímos
+# de volta no SQLite de sempre — nenhuma mudança no seu fluxo de desenvolvimento.
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fintrack.db")
 
-# SessionLocal é uma "fábrica" de sessões. Cada vez que chamamos SessionLocal(),
-# ganhamos uma conversa nova e independente com o banco.
+# SQLite precisa dessa opção para funcionar bem com múltiplas threads;
+# Postgres não usa (nem aceita) esse parâmetro.
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=False)
+
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-# Toda classe-tabela (ORM) vai herdar de Base.
 Base = declarative_base()
 
 
