@@ -10,7 +10,6 @@ O projeto conta com design responsivo (com suporte a PWA para instalação no ce
 
 <p align="center">
   <img src="docs/gifs/login-splash.gif" width="45%" alt="Login e Splash Screen" />
-  <img src="docs/gifs/metas-modal.gif" width="45%" alt="Gestão de Metas e Modais" />
 </p>
 
 ---
