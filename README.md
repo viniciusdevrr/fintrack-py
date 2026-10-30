@@ -9,7 +9,7 @@ O projeto conta com design responsivo (com suporte a PWA para instalação no ce
 ## Demonstração Visual
 
 <p align="center">
-  <img src="src/fintrack/docs/gifs/loginsplash.gif" width="918" height="553" alt="Login e Splash Screen" />
+  <img src="src/fintrack/docs/gifs/loginsplash.gif" width="918" height="553" alt="Login e Splash Screen"/>
 </p>
 
 ---
