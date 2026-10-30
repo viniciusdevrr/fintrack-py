@@ -2,12 +2,20 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// O celular só conversa com o Vite, e o Vite repassa /api para o FastAPI local.
+const proxyApi = {
+  "/api": {
+    target: "http://127.0.0.1:8000",
+    changeOrigin: true,
+    rewrite: (path: string) => path.replace(/^\/api/, ""),
+  },
+};
+
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
       manifest: {
         name: "FinTrack — Finanças Pessoais",
         short_name: "FinTrack",
@@ -27,14 +35,14 @@ export default defineConfig({
   ],
   server: {
     port: 5173,
-    proxy: {
-      // Evita problema de CORS em dev: tudo que começar com /api
-      // é redirecionado para o backend FastAPI local.
-      "/api": {
-        target: "http://127.0.0.1:8000",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
+    host: true,
+    allowedHosts: true,
+    proxy: proxyApi,
+  },
+  preview: {
+    port: 4173,
+    host: true,
+    allowedHosts: true,
+    proxy: proxyApi,
   },
 });
