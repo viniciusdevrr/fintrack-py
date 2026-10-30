@@ -4,11 +4,12 @@ from fintrack.excecoes import DescricaoInvalidaError, ValorInvalidoError, Limite
 class Cartao:
     """Representa um cartão de crédito e controla seu limite disponível."""
 
-    def __init__(self, nome: str, limite: float, dia_fechamento: int, dia_vencimento: int) -> None:
+    def __init__(self, nome: str, limite: float, dia_fechamento: int, dia_vencimento: int, cor: str = "#FF9B03") -> None:
         self.nome = nome
         self.limite = limite
         self.dia_fechamento = dia_fechamento
         self.dia_vencimento = dia_vencimento
+        self.cor = cor
         self.__compras: list["DespesaCartao"] = []
 
     @property
@@ -21,6 +22,16 @@ class Cartao:
             raise DescricaoInvalidaError/ValorInvalidoError("O nome do cartão não pode ser vazio.")
         self.__nome = valor.strip()
 
+    @property
+    def cor(self) -> str:
+        return self.__cor
+
+    @cor.setter
+    def cor(self, valor: str) -> None:
+        if not valor or not valor.startswith("#"):
+            raise ValueError("Cor deve estar em formato hexadecimal, ex: #FF9B03.")
+        self.__cor = valor
+    
     @property
     def limite(self) -> float:
         return self.__limite

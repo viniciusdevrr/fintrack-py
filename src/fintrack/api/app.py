@@ -1,0 +1,54 @@
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+
+from fintrack.database import criar_tabelas
+from fintrack.api.rotas_auth import roteador as roteador_auth
+from fintrack.api.rotas_categoria import roteador as roteador_categoria
+from fintrack.api.rotas_meta import roteador as roteador_meta
+from fintrack.api.rotas_alerta import roteador as roteador_alerta
+from fintrack.api.rotas_conta import roteador as roteador_conta
+from fintrack.api.rotas_relatorio import roteador as roteador_relatorio
+from fintrack.api.rotas_simulador import roteador as roteador_simulador
+from fintrack.api.rotas_assistente import roteador as roteador_assistente
+from fintrack.api.rotas_cartao import roteador as roteador_cartao
+
+from fastapi.middleware.cors import CORSMiddleware
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Tudo antes do "yield" roda quando o servidor SOBE.
+    criar_tabelas()
+    yield
+    # Tudo depois do "yield" rodaria quando o servidor DESLIGA
+    # (não precisamos de nada aqui por enquanto).
+
+
+app = FastAPI(
+    title="FinTrack API",
+    description="API do aplicativo de finanças pessoais FinTrack.",
+    version="0.1.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+app.include_router(roteador_auth)
+app.include_router(roteador_categoria)
+app.include_router(roteador_meta)
+app.include_router(roteador_alerta)
+app.include_router(roteador_conta)
+app.include_router(roteador_relatorio)
+app.include_router(roteador_simulador)
+app.include_router(roteador_assistente)
+app.include_router(roteador_cartao)
+
+
+@app.get("/", tags=["Status"])
+def raiz():
+    return {"status": "FinTrack API no ar"}
